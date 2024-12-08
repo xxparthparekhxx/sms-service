@@ -9,7 +9,7 @@ Secure authentication
 
 🚀 Getting Started
 
-- Prerequisites
+> Prerequisites
 - Flutter SDK
 - Firebase project
 - Django backend server
@@ -21,33 +21,30 @@ Secure authentication
 - Enable Cloud Messaging in Firebase Console
 - Backend Setup
 
-Clone the repository 
+> Clone the repository 
 ```bash
  git clone https://github.com/yourusername/sms_service.git
 ```
-Install Python dependencies 
+> Install Python dependencies 
 ```bash
  cd backend pip install -r requirements.txt
 ```
 
-Configure Django settings 
+> Configure Django settings 
 ```bash
  python manage.py migrate python manage.py createsuperuser
 ```
 
-Start the backend server 
+> Start the backend server 
 ```bash
 python manage.py runserver
 ```
-Flutter App Setup
-Install Flutter dependencies 
+## Flutter App Setup
+>Install Flutter dependencies 
 ```bash 
 flutter pub get
 ```
-
-Update server URL in app configuration
-
-Run the app 
+>Run the app 
 ```bash
  flutter run
 ```
@@ -72,7 +69,7 @@ Run the app
 
 ### 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details
+> This project is licensed under the MIT License - see the LICENSE file for details
 
 
 ### 🤝 Contributing - Contributions are welcome! Please feel free to submit a Pull Request.
