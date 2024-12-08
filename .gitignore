@@ -49,4 +49,4 @@ backend/db.sqlite3
 lib/firebase_options.dart
 firebase.json
 android/app/google-services.json
-backend/sms
+backend/sms*
