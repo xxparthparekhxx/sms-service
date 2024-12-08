@@ -23,25 +23,19 @@ class DeviceViewSet(viewsets.ModelViewSet):
         return Device.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
+        # Delete existing device if any
+        Device.objects.filter(user=self.request.user).delete()
+        # Create new device
         serializer.save(user=self.request.user)
-
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def send_sms(request):
-    device_id = request.data.get('device_id')
     message_text = request.data.get('message')
     recipient = request.data.get('recipient')
 
     try:
-        device = Device.objects.get(id=device_id, user=request.user)
+        device = Device.objects.get(user=request.user)
         
         # Create message record
         message = Message.objects.create(

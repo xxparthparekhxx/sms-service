@@ -28,14 +28,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'sms worker',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sms worker'),
-        ),
-        body: const AppGate(),
-      ),
+      home: AppGate(),
     );
   }
 }

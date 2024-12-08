@@ -1,61 +1,136 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:sms_service/models/device.dart';
-import 'package:sms_service/root_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final devices = Provider.of<RootProvider>(context).devices;
-    return Column(
-      children: [
-        ...devices.map(
-          (device) => DeviceTile(device: device),
-        ),
-      ],
-    );
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class DeviceTile extends StatelessWidget {
-  final Device device;
-  final VoidCallback? onTap;
-  final VoidCallback? onDelete;
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  bool isWorking = false;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
 
-  const DeviceTile({
-    super.key,
-    required this.device,
-    this.onTap,
-    this.onDelete,
-  });
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutExpo),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
-        onTap: onTap,
-        leading: const CircleAvatar(
-          child: Icon(Icons.phone_android),
-        ),
-        title: Text(device.name),
-        subtitle: Text(device.phoneNumber),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${device.smsLimit} SMS'),
-            if (onDelete != null) ...[
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: onDelete,
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isWorking ? Colors.green.shade800 : Colors.black,
+                      boxShadow: [
+                        BoxShadow(
+                          color: isWorking
+                              ? Colors.green.withOpacity(0.3)
+                              : Colors.grey.withOpacity(0.23),
+                          blurRadius: 30,
+                          spreadRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        isWorking ? '🚀' : '😴',
+                        style: const TextStyle(fontSize: 50),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    isWorking ? 'WORKING' : 'SLEEPING',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: isWorking ? Colors.green : Colors.red,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ],
-        ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: GestureDetector(
+              onTapDown: (_) => _controller.forward(),
+              onTapUp: (_) => _controller.reverse(),
+              onTapCancel: () => _controller.reverse(),
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  width: double.infinity,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    color: isWorking ? Colors.green : Colors.red,
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isWorking ? Colors.green : Colors.red)
+                            .withOpacity(0.3),
+                        blurRadius: 15,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(40),
+                      onTap: () {
+                        setState(() {
+                          isWorking = !isWorking;
+                        });
+                      },
+                      child: Center(
+                        child: Text(
+                          isWorking ? 'Stop Service' : 'Start Service',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

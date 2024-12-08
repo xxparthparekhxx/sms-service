@@ -11,14 +11,10 @@ import 'package:sms_service/services/api_service.dart';
 Future<void> _backgroundMessageHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   final messenger = FlutterBackgroundMessenger();
-
-  if (message.data.containsKey('phoneNumber') &&
-      message.data.containsKey('message')) {
-    await messenger.sendSMS(
-      message: message.data['message'],
-      phoneNumber: message.data['phoneNumber'],
-    );
-  }
+  await messenger.sendSMS(
+    message: message.data['message'],
+    phoneNumber: message.data['recipient'],
+  );
 }
 
 class MessagingService {
@@ -48,6 +44,8 @@ class MessagingService {
       badge: true,
       sound: true,
       provisional: false,
+      criticalAlert: true, // Add this
+      announcement: true, // Add this
     );
 
     // Get initial token
@@ -82,7 +80,7 @@ class MessagingService {
 
   Future<void> _handleMessage(RemoteMessage message) async {
     // Show local notification
-    await _showNotification(message);
+    // await _showNotification(message);
     print(message.data);
 
     // Send SMS if required data is present
